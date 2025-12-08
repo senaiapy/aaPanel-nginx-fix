@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  testserver-proxy:
+    image: alpine:latest
+    command: sleep infinity
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        # Enable Traefik
+        - "traefik.enable=true"
+
+        # HTTP router - will auto-redirect to HTTPS (Traefik handles this globally)
+        - "traefik.http.routers.testserver-http.rule=Host(`testserver.b7g.app`)"
+        - "traefik.http.routers.testserver-http.entrypoints=web"
+        - "traefik.http.routers.testserver-http.service=testserver-service"
+
+        # HTTPS router - Traefik will get Let's Encrypt certificate automatically
+        - "traefik.http.routers.testserver-https.rule=Host(`testserver.b7g.app`)"
+        - "traefik.http.routers.testserver-https.entrypoints=websecure"
+        - "traefik.http.routers.testserver-https.tls=true"
+        - "traefik.http.routers.testserver-https.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.testserver-https.service=testserver-service"
+
+        # Service - proxy to nginx on host machine port 8080
+        # Using host IP since we're in Docker Swarm (host.docker.internal doesn't work in swarm)
+        - "traefik.http.services.testserver-service.loadbalancer.server.url=http://172.17.0.1:8080"
+
+        # Optional: Preserve host header
+        - "traefik.http.services.testserver-service.loadbalancer.passhostheader=true"
+
+networks:
+  traefik_public:
+    external: true

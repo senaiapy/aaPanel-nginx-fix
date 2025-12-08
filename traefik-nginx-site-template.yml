@@ -1,0 +1,47 @@
+version: '3.8'
+
+# Template for adding nginx sites to Traefik
+# Replace SITENAME and DOMAIN with your values
+
+services:
+  SITENAME-proxy:
+    image: alpine:latest
+    command: sleep infinity
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - "traefik.enable=true"
+
+        # HTTP router
+        - "traefik.http.routers.SITENAME-http.rule=Host(`DOMAIN`)"
+        - "traefik.http.routers.SITENAME-http.entrypoints=web"
+        - "traefik.http.routers.SITENAME-http.service=SITENAME-service"
+
+        # HTTPS router with auto SSL
+        - "traefik.http.routers.SITENAME-https.rule=Host(`DOMAIN`)"
+        - "traefik.http.routers.SITENAME-https.entrypoints=websecure"
+        - "traefik.http.routers.SITENAME-https.tls=true"
+        - "traefik.http.routers.SITENAME-https.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.SITENAME-https.service=SITENAME-service"
+
+        # Service - proxy to nginx on port 8080
+        - "traefik.http.services.SITENAME-service.loadbalancer.server.url=http://172.18.0.1:8080"
+        - "traefik.http.services.SITENAME-service.loadbalancer.passhostheader=true"
+
+networks:
+  traefik_public:
+    external: true
+
+# Usage:
+# 1. Copy this file: cp /root/traefik-nginx-site-template.yml /root/mysite.yml
+# 2. Edit /root/mysite.yml and replace:
+#    - SITENAME with your site name (e.g., myapp)
+#    - DOMAIN with your domain (e.g., myapp.example.com)
+# 3. Deploy: docker stack deploy -c /root/mysite.yml SITENAME
+# 4. Traefik will automatically get SSL certificate
+#
+# Example:
+#   SITENAME: blog
+#   DOMAIN: blog.b7g.app
+#   Deploy: docker stack deploy -c /root/blog.yml blog
