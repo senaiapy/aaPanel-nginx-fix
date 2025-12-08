@@ -237,7 +237,7 @@ create_traefik_config() {
         fi
     done
 
-    print_info "Creating Traefik configuration..."
+    print_info "Creating Traefik configuration..." >&2
 
     cat > "$config_file" << EOF
 version: '3.8'
@@ -279,7 +279,7 @@ networks:
     external: true
 EOF
 
-    print_success "Configuration created: $config_file"
+    print_success "Configuration created: $config_file" >&2
     echo "$config_file"
 }
 
