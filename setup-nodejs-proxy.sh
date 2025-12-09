@@ -261,9 +261,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
+User=root
 WorkingDirectory=${APP_PATH}
-ExecStart=/usr/bin/npm start
+ExecStart=/usr/bin/node server.js
 Restart=always
 RestartSec=10
 StandardOutput=journal

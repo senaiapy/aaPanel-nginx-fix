@@ -1,8 +1,26 @@
 # Node.js Deployment - Quick Start
 
-## The Fastest Way to Deploy Node.js Apps
+## ⚡ ONE COMMAND DEPLOYMENT
 
-### 4 Simple Steps
+### The Fastest Way to Deploy Node.js Apps
+
+```bash
+# Deploy everything with ONE command!
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh DOMAIN PORT /path/to/app
+```
+
+**That's it!** This single command:
+- ✅ Configures nginx reverse proxy
+- ✅ Creates systemd service
+- ✅ Starts your Node.js app
+- ✅ Generates SSL certificate
+- ✅ Verifies HTTPS access
+
+---
+
+## Alternative: Manual 3-Step Process
+
+If you prefer step-by-step control:
 
 ```bash
 # 1. Setup nginx reverse proxy
@@ -14,9 +32,6 @@ systemctl enable nodejs-YOUR-DOMAIN
 
 # 3. Generate SSL certificate
 sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh YOUR-DOMAIN.com
-
-# 4. Done! Access your app
-https://YOUR-DOMAIN.com
 ```
 
 ---
@@ -42,7 +57,26 @@ app.listen(PORT, () => {
 });
 ```
 
-### Deployment Commands
+### ONE COMMAND Deployment
+
+```bash
+# 1. Upload your app
+cd /var/www
+git clone https://github.com/yourname/express-api.git
+cd express-api
+npm install
+
+# 2. Deploy with ONE command! 🚀
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh api.b7g.app 5000 /var/www/express-api
+```
+
+**Done!** Your API is live at `https://api.b7g.app`
+
+---
+
+### Manual Deployment (Alternative)
+
+If you prefer step-by-step:
 
 ```bash
 # 1. Upload your app
@@ -65,17 +99,14 @@ sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh api.b7g.app
 curl https://api.b7g.app
 ```
 
-**Done!** Your API is live at `https://api.b7g.app`
-
 ---
 
 ## Different Node.js Frameworks
 
 ### Express.js
 ```bash
-sudo /root/aaPanel-nginx-fix/setup-nodejs-proxy.sh api.example.com 5000 /var/www/express-app
-systemctl start nodejs-api-example-com
-sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh api.example.com
+# ONE COMMAND 🚀
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh api.example.com 5000 /var/www/express-app
 ```
 
 ### Next.js
@@ -84,20 +115,18 @@ sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh api.example.com
 cd /var/www/nextjs-app
 npm run build
 
-# Then deploy
-sudo /root/aaPanel-nginx-fix/setup-nodejs-proxy.sh app.example.com 3000 /var/www/nextjs-app
-systemctl start nodejs-app-example-com
-sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh app.example.com
+# Deploy with ONE COMMAND 🚀
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh app.example.com 3000 /var/www/nextjs-app
 ```
 
 ### NestJS
 ```bash
+# Build first
 cd /var/www/nestjs-api
 npm run build
 
-sudo /root/aaPanel-nginx-fix/setup-nodejs-proxy.sh api.example.com 3000 /var/www/nestjs-api
-systemctl start nodejs-api-example-com
-sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh api.example.com
+# Deploy with ONE COMMAND 🚀
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh api.example.com 3000 /var/www/nestjs-api
 ```
 
 ---
@@ -227,22 +256,19 @@ Internet → Traefik (SSL, port 80/443)
 ## Multiple Apps on One Server
 
 ```bash
+# Deploy all apps with ONE COMMAND each! 🚀
+
 # App 1: Frontend (React/Next.js)
-sudo /root/aaPanel-nginx-fix/setup-nodejs-proxy.sh app.example.com 3000 /var/www/frontend
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh app.example.com 3000 /var/www/frontend
 
 # App 2: Backend API
-sudo /root/aaPanel-nginx-fix/setup-nodejs-proxy.sh api.example.com 5000 /var/www/backend
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh api.example.com 5000 /var/www/backend
 
 # App 3: Admin Panel
-sudo /root/aaPanel-nginx-fix/setup-nodejs-proxy.sh admin.example.com 4000 /var/www/admin
-
-# Generate SSL for all
-sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh app.example.com
-sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh api.example.com
-sudo /root/aaPanel-nginx-fix/generate-ssl-cert.sh admin.example.com
+sudo /root/aaPanel-nginx-fix/deploy-nodejs.sh admin.example.com 4000 /var/www/admin
 ```
 
-Each app runs independently on its own port!
+Each app runs independently on its own port with its own SSL certificate!
 
 ---
 
