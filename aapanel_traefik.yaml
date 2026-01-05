@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  ## aaPanel HTTP proxy - forwards traffic to host nginx on port 8080
+  aapanel-http:
+    image: alpine/socat:latest
+    command: "TCP4-LISTEN:80,fork,reuseaddr TCP4:host.docker.internal:8080"
+    networks:
+      - traefik_public
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        ## HTTP router for aaPanel domains (port 80)
+        - "traefik.http.routers.aapanel-http.rule=Host(`admin.clubdeofertas.online`,`admin.oraculosolutions.online`,`admin.urinotest.online`,`api.b7g.app`,`api.clubdeofertas.online`,`api.oraculosolutions.online`,`api.urinotest.online`,`cineflix-primes.online`,`clubdeofertas.online`,`mail.b7g.app`,`oraculosolutions.online`,`projeto.urinotest.online`,`senaia-bank.in`,`testserver.b7g.app`,`urinotest.online`)"
+        - "traefik.http.routers.aapanel-http.entrypoints=web"
+        - "traefik.http.routers.aapanel-http.priority=100"
+        - "traefik.http.routers.aapanel-http.service=aapanel-service"
+        ## HTTPS router for aaPanel domains (port 443) - SSL termination at Traefik
+        - "traefik.http.routers.aapanel-https.rule=Host(`admin.clubdeofertas.online`,`admin.oraculosolutions.online`,`admin.urinotest.online`,`api.b7g.app`,`api.clubdeofertas.online`,`api.oraculosolutions.online`,`api.urinotest.online`,`cineflix-primes.online`,`clubdeofertas.online`,`mail.b7g.app`,`oraculosolutions.online`,`projeto.urinotest.online`,`senaia-bank.in`,`testserver.b7g.app`,`urinotest.online`)"
+        - "traefik.http.routers.aapanel-https.entrypoints=websecure"
+        - "traefik.http.routers.aapanel-https.priority=100"
+        - "traefik.http.routers.aapanel-https.service=aapanel-service"
+        - "traefik.http.routers.aapanel-https.tls=true"
+        - "traefik.http.routers.aapanel-https.tls.certresolver=letsencryptresolver"
+        ## Service definition
+        - "traefik.http.services.aapanel-service.loadbalancer.server.port=80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  traefik_public:
+    external: true
+    name: traefik_public
